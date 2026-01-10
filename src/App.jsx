@@ -1,4 +1,9 @@
 import React, { useState, useEffect } from 'react';
+
+/* Lucide-React — это библиотека готовых иконок. 
+  Каждое название (Wallet, Zap и т.д.) — это маленькая векторная картинка, 
+  которую мы вставляем в код как обычный текст.
+*/
 import { 
   Wallet, Users, Zap, ArrowRight, Check, Box, Plus, 
   RefreshCcw, Ticket, Star, ShieldCheck, Fingerprint, 
@@ -13,6 +18,10 @@ import {
 } from 'lucide-react';
 
 // --- БЛОК ТЕКСТОВ (ПЕРЕВОДЫ) ---
+/* Это "словарь" нашего сайта. Вместо того чтобы писать текст прямо в разметке, 
+  мы берем его отсюда. Это позволяет мгновенно переключать язык (RU/EN/ES/KO), 
+  не создавая отдельные страницы для каждой страны.
+*/
 const translations = {
   RU: {
     nav: { widget: 'Виджет', crm: 'CRM', loyalty: 'Лояльность', fitting: 'Примерка', rates: 'Тарифы', connect: 'Бета-тест' },
@@ -200,7 +209,7 @@ const translations = {
         enterprise: ["0% комиссия de платформа", "Gas pagado por THYSS", "Transacciones ilimitadas", "Whitelabel Widget Pro", "CRM Pro", "NFT Gifts & Colaboraciones", "Soporte Prioritario", "3D Fit (Pronto)"]
       }
     },
-    footer: { desc: 'Merchant OS para marcas de moda. ', sub: 'Infraestructura Web3 e-commerce.', support: 'Soporte', social: 'Redes sociales' },
+    footer: { desc: 'Merchant OS для брендов моды. ', sub: 'Инфраструктура Web3 e-commerce.', support: 'Soporte', social: 'Redes sociales' },
     notFound: { denied: 'ACCESO_DENEGADO', error: 'ERROR: En desarrollo', emergency: 'Enlace de emergencia', sub: 'Página en desarrollo. Escanee para contactраct.', back: 'Volver al núcleo' },
     beta: { 
       title: 'Unirse al Núcleo', back: 'Volver al núcleo', submit: 'Confirmar Acceso', success: 'Acceso Concedido', 
@@ -278,11 +287,16 @@ const translations = {
 
 // --- ВСПОМОГАТЕЛЬНЫЕ КОМПОНЕНТЫ ---
 
+/* Компонент для генерации QR-кодов. 
+  Он принимает данные (например, ссылку) и возвращает картинку с QR.
+*/
 function RealQRCode({ data, size = 150, className = "" }) {
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(data)}&bgcolor=ffffff&color=000000&margin=1`;
   return <img src={qrUrl} alt="QR" className={`border-2 border-black ${className}`} style={{ width: '100%', maxWidth: size, height: 'auto', aspectRatio: '1/1' }} />;
 }
 
+/* Блок с QR-кодом для перехода в Telegram. 
+*/
 function TelegramQRBlock({ t, centered = false }) {
   return (
     <div className={`pt-8 border-t border-black/10 text-black ${centered ? 'flex flex-col items-center' : ''}`}>
@@ -299,6 +313,9 @@ function TelegramQRBlock({ t, centered = false }) {
   );
 }
 
+/* Маленькая карточка с иконкой и описанием функции. 
+  Используется многократно в разных разделах сайта.
+*/
 function CompactFeature({ icon: Icon, title, desc, dark = false }) {
   return (
     <div className={`flex items-start gap-4 p-4 border-2 border-black transition-all group ${dark ? 'bg-black/30 border-white/20' : 'bg-zinc-50'}`}>
@@ -313,6 +330,9 @@ function CompactFeature({ icon: Icon, title, desc, dark = false }) {
   );
 }
 
+/* Бегущая строка в верхней части сайта. 
+  Создает эффект бесконечного движения текста.
+*/
 const Marquee = ({ lang = 'RU' }) => {
   const t = translations[lang] || translations['RU'];
   const marqueeItems = [t.marquee.phase, t.marquee.commission, t.marquee.trial];
@@ -338,25 +358,33 @@ const Marquee = ({ lang = 'RU' }) => {
 
 // --- ВИДЖЕТЫ ---
 
+/* Интерактивный виджет оплаты. 
+  Имитирует процесс перевода денег: нажатие -> ожидание -> успех.
+*/
 function PaymentWidget({ t }) {
+  // useState — это "память" компонента. Здесь мы храним статус (ожидание, успех и т.д.)
   const [status, setStatus] = useState('idle');
   const [walletAddress] = useState('UQD-STABLE-CHECKPOINT-TON-ADDR-777');
-  const [timeLeft, setTimeLeft] = useState(30000); 
+  const [timeLeft, setTimeLeft] = useState(30000); // Таймер на 30 секунд
   const [isCopied, setIsCopied] = useState(false);
   
   const amount = 142.50;
 
+  // Функция запуска "оплаты"
   const handleStartPayment = () => {
     setTimeLeft(30000);
     setStatus('initializing');
   };
 
+  // useEffect — это "реакция" сайта. Например, если статус изменился на 'initializing', 
+  // через 1.5 секунды переключить на 'payment'.
   useEffect(() => {
     if (status !== 'initializing') return;
     const timer = setTimeout(() => setStatus('payment'), 1500);
     return () => clearTimeout(timer);
   }, [status]);
 
+  // Логика работы таймера обратного отсчета
   useEffect(() => {
     let timer;
     if (status === 'payment' && timeLeft > 0) {
@@ -367,12 +395,14 @@ function PaymentWidget({ t }) {
     return () => clearInterval(timer);
   }, [status, timeLeft]);
 
+  // Форматирование времени для отображения (секунды:миллисекунды)
   const formatTime = (ms) => {
     const s = Math.floor(ms / 1000);
     const m = Math.floor((ms % 1000) / 10);
     return `${s.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
   };
 
+  // Копирование адреса кошелька в буфер обмена
   const copyAddress = () => {
     const el = walletAddress;
     navigator.clipboard?.writeText?.(el).catch(() => {
@@ -387,6 +417,7 @@ function PaymentWidget({ t }) {
     setTimeout(() => setIsCopied(false), 2000);
   };
 
+  // Если ничего не происходит — показываем кнопку "К оплате"
   if (status === 'idle') {
     return (
       <button onClick={handleStartPayment} className="w-full max-w-xs h-16 bg-white border-2 border-black flex items-center justify-between px-6 group hover:bg-black transition-all shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] text-black cursor-pointer active:translate-x-1 active:translate-y-1 active:shadow-none overflow-hidden relative z-40 mx-auto">
@@ -402,6 +433,7 @@ function PaymentWidget({ t }) {
     );
   }
 
+  // Если оплата прошла успешно
   if (status === 'success') {
     return (
       <div className="w-full max-w-sm border-2 border-black bg-white shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] overflow-hidden text-black animate-in zoom-in-95 duration-300 relative z-40 mx-auto">
@@ -425,6 +457,7 @@ function PaymentWidget({ t }) {
     );
   }
 
+  // Если произошла ошибка (вышло время)
   if (status === 'error') {
     return (
       <div className="w-full max-w-sm border-2 border-black bg-white shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] overflow-hidden text-black animate-in zoom-in-95 duration-300 relative z-40 mx-auto">
@@ -448,6 +481,7 @@ function PaymentWidget({ t }) {
     );
   }
 
+  // Окно ожидания оплаты (с QR-кодом и таймером)
   return (
     <div className="w-full max-w-sm border-2 border-black bg-white shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] overflow-hidden text-black animate-in slide-in-from-top-2 fade-in duration-300 relative z-40 mx-auto">
       <div className="bg-black text-white p-4 border-b-2 border-black flex justify-between items-center text-white">
@@ -507,13 +541,17 @@ function PaymentWidget({ t }) {
   );
 }
 
+/* Виджет минтинга (создания) NFT. 
+  Показывает анимацию прогресса записи данных в блокчейн.
+*/
 function NFTTerminal({ t }) {
   const [status, setStatus] = useState('idle'); 
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(0); // Текущий шаг процесса
   const steps = t.mint.steps;
 
   const handleMint = () => { setStatus('processing'); setStep(0); };
 
+  // Логика автоматического переключения шагов минтинга
   useEffect(() => {
     if (status !== 'processing') return;
     const interval = setInterval(() => {
@@ -538,6 +576,7 @@ function NFTTerminal({ t }) {
       </div>
       <div className="p-4 sm:p-6 bg-zinc-100">
         {status === 'processing' ? (
+          // Экран загрузки с полосой прогресса
           <div className="h-[220px] md:h-[260px] flex flex-col items-center justify-center space-y-6">
             <RefreshCcw size={48} className="animate-spin opacity-20 text-black" />
             <div className="space-y-3 text-center w-full">
@@ -548,6 +587,7 @@ function NFTTerminal({ t }) {
             </div>
           </div>
         ) : status === 'success' ? (
+          // Экран успеха
           <div className="h-[220px] md:h-[260px] flex flex-col justify-center items-center space-y-6 text-center">
             <div className="w-16 h-16 bg-[#CCFF00] border-2 border-black flex items-center justify-center shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
               <Sparkles size={32} />
@@ -561,6 +601,7 @@ function NFTTerminal({ t }) {
             </button>
           </div>
         ) : (
+          // Основной экран с информацией о NFT
           <div className="space-y-4 text-black text-left">
             <div className="bg-white border-2 border-black p-3 md:p-4 shadow-sm space-y-4">
               <div className="flex justify-between items-start">
@@ -595,6 +636,9 @@ function NFTTerminal({ t }) {
   );
 }
 
+/* Виджет 3D-примерки. 
+  Позволяет пользователю менять параметры (рост, вес) и "рассчитывать" свой размер.
+*/
 function FittingTerminal({ t }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
@@ -603,11 +647,13 @@ function FittingTerminal({ t }) {
   const [measurements, setMeasurements] = useState({ height: 175, weight: 70, chest: 95, waist: 80 });
   const [result, setResult] = useState('M');
 
+  // Имитация процесса сканирования тела
   const handleScan = () => { 
     setIsScanning(true); 
     setTimeout(() => { 
       setIsScanning(false); 
       setIsCalculated(true); 
+      // Простая формула для примера: расчет размера на основе веса и роста
       const score = measurements.height + (measurements.weight * 1.5); 
       setResult(score > 300 ? 'XL' : score > 280 ? 'L' : 'M'); 
     }, 2000); 
@@ -618,6 +664,7 @@ function FittingTerminal({ t }) {
     setTimeout(() => setIsAdded(false), 3000);
   };
 
+  // В свернутом состоянии — просто кнопка
   if (!isExpanded) {
     return (
       <button onClick={() => setIsExpanded(true)} className="w-full max-w-sm h-16 bg-white border-2 border-black flex items-center justify-between px-6 group hover:bg-black transition-all shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-black cursor-pointer active:translate-x-1 active:translate-y-1 active:shadow-none overflow-hidden relative z-40 mx-auto">
@@ -633,6 +680,7 @@ function FittingTerminal({ t }) {
     );
   }
 
+  // В развернутом состоянии — интерфейс с ползунками
   return (
     <div className="w-full max-w-sm border-2 border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden relative z-40 text-black mx-auto">
       <div className="bg-black text-white p-3 border-b-2 border-black flex justify-between items-center text-white">
@@ -655,6 +703,7 @@ function FittingTerminal({ t }) {
         </div>
 
         {!isCalculated && (
+          // Анимация сканера (бегущая линия)
           <div className="bg-white border-2 border-black relative h-32 overflow-hidden flex items-center justify-center">
              {isScanning && <div className="absolute inset-0 z-10 bg-[linear-gradient(to_bottom,transparent_0%,#CCFF00_50%,transparent_100%)] h-1 w-full opacity-40 animate-scanline"></div>}
              <div className="relative flex flex-col items-center text-black">
@@ -669,6 +718,7 @@ function FittingTerminal({ t }) {
         )}
 
         {isCalculated ? (
+          // Показ результата подбора размера
           <div className="bg-white border-2 border-black p-6 text-center space-y-4 animate-in zoom-in-95 duration-300 text-black">
              <div className="text-[10px] font-black uppercase opacity-40">Your Recommended Size:</div>
              <div className="text-6xl md:text-7xl font-black tracking-tighter">{result}</div>
@@ -685,6 +735,7 @@ function FittingTerminal({ t }) {
              </div>
           </div>
         ) : (
+          // Форма ввода параметров (рост, вес и т.д.)
           <div className="grid grid-cols-2 gap-2 text-black text-left">
              {[
                { id: 'height', label: 'Height (cm)', val: measurements.height, min: 150, max: 200 }, 
@@ -710,6 +761,9 @@ function FittingTerminal({ t }) {
 
 // --- СТРАНИЦЫ И НАВИГАЦИЯ ---
 
+/* Шапка сайта (Навигация). 
+  Она зафиксирована сверху и содержит кнопки перехода по разделам и переключатель языков.
+*/
 function NavigationBlockMobile({ onNavigateHome, onConnect, t, lang, setLang, standardPadding, isSimplified = false }) {
   return (
     <nav className="fixed top-0 left-0 w-full z-[100] bg-white border-b border-black h-[72px] flex items-center text-black">
@@ -717,6 +771,7 @@ function NavigationBlockMobile({ onNavigateHome, onConnect, t, lang, setLang, st
         <button onClick={onNavigateHome} className="text-xl md:text-2xl font-black tracking-tighter uppercase hover:opacity-70 transition-opacity">THYSS</button>
         {!isSimplified ? (
           <>
+            {/* Меню ссылок (видно только на больших экранах) */}
             <div className="hidden lg:flex items-center gap-8 h-full">
               {['widget', 'crm', 'loyalty', 'fitting', 'rates'].map(id => (
                 <a key={id} href={`#${id}`} className="text-[9px] font-black uppercase tracking-widest hover:line-through transition-all px-1">
@@ -724,6 +779,7 @@ function NavigationBlockMobile({ onNavigateHome, onConnect, t, lang, setLang, st
                 </a>
               ))}
             </div>
+            {/* Переключатель языков и кнопка входа */}
             <div className="flex items-center gap-3 md:gap-4">
               <div className="flex items-center gap-1 md:gap-2 text-[10px] font-black uppercase tracking-widest mr-1 select-none">
                 <button onClick={() => setLang('RU')} className={`hover:line-through transition-all ${lang === 'RU' ? 'text-black' : 'opacity-30'} cursor-pointer`}>RU</button>
@@ -742,6 +798,7 @@ function NavigationBlockMobile({ onNavigateHome, onConnect, t, lang, setLang, st
             </div>
           </>
         ) : (
+          // Упрощенная кнопка "Назад", если мы находимся на странице формы
           <button onClick={onNavigateHome} className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] hover:line-through transition-all group">
             <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> 
             {String(t.beta.back)}
@@ -752,6 +809,9 @@ function NavigationBlockMobile({ onNavigateHome, onConnect, t, lang, setLang, st
   );
 }
 
+/* Футер (подвал) сайта. 
+  Содержит контакты, ссылки на поддержку и копирайт.
+*/
 function FooterBlock({ onNavigateError, standardPadding, t }) {
   return (
     <footer className="bg-black text-white pt-16 pb-10 text-left relative z-10 border-t-2 border-black">
@@ -773,6 +833,7 @@ function FooterBlock({ onNavigateError, standardPadding, t }) {
           </div>
         </div>
       </div>
+      {/* Нижняя полоса с копирайтом и ссылкой на партнера */}
       <div className={`pt-10 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4 text-[8px] font-bold uppercase text-white/40 ${standardPadding}`}>
         <span>
           © 2026 THYSS x <a href="https://shutterfeel.com" target="_blank" rel="noopener noreferrer" className="hover:underline decoration-[#CCFF00] decoration-2 underline-offset-4 transition-all">SHUTTERFEEL</a>
@@ -783,6 +844,9 @@ function FooterBlock({ onNavigateError, standardPadding, t }) {
   );
 }
 
+/* Главная страница лендинга. 
+  Она собирает все секции: Hero, Gateway, Widget, CRM, Loyalty, Fitting и Pricing.
+*/
 function LandingContent({ onNavigateError, onConnect, t, lang, setLang, standardPadding }) {
   const plansData = [ 
     { id: 'starter', name: t.pricing.starter, price: 0, features: t.pricing.features.starter, sub: t.pricing.sub1 }, 
@@ -797,7 +861,7 @@ function LandingContent({ onNavigateError, onConnect, t, lang, setLang, standard
       <div className="pt-[72px] w-full text-black">
         <Marquee lang={lang} />
         
-        {/* HERO SECTION */}
+        {/* ГЛАВНЫЙ ЭКРАН (HERO) */}
         <header className="border-b border-black overflow-hidden w-full">
           <div className={`w-full py-16 md:py-24 ${standardPadding} text-left`}>
             <h1 className="font-black uppercase tracking-tighter leading-[0.85] text-left break-words overflow-hidden select-none">
@@ -813,7 +877,7 @@ function LandingContent({ onNavigateError, onConnect, t, lang, setLang, standard
           </div>
         </header>
         
-        {/* GATEWAY SECTION */}
+        {/* СЕКЦИЯ ШЛЮЗА */}
         <section className="bg-white border-b border-black py-16 text-left w-full overflow-hidden scroll-mt-[72px]">
           <div className={`w-full ${standardPadding} text-left`}>
             <div className="w-fit inline-block px-2 py-1 bg-black text-white text-[9px] font-black uppercase mb-6">{String(t.gateway.tag)}</div>
@@ -826,7 +890,7 @@ function LandingContent({ onNavigateError, onConnect, t, lang, setLang, standard
           </div>
         </section>
         
-        {/* WIDGET SECTION */}
+        {/* СЕКЦИЯ ВИДЖЕТА */}
         <section id="widget" className="border-b border-black bg-white overflow-hidden text-left scroll-mt-[72px] w-full">
           <div className="flex flex-col lg:grid lg:grid-cols-12 w-full text-left">
             <div className={`lg:col-span-6 py-12 md:py-16 ${standardPadding} flex flex-col justify-center text-left`}>
@@ -838,6 +902,7 @@ function LandingContent({ onNavigateError, onConnect, t, lang, setLang, standard
                 <CompactFeature icon={Cpu} title={t.widget.f2} desc={t.widget.f2_desc} />
               </div>
             </div>
+            {/* Визуальная часть с интерактивным виджетом оплаты */}
             <div className="lg:col-span-6 py-12 md:py-16 px-6 flex flex-col items-center justify-center border-t lg:border-t-0 lg:border-l border-black bg-zinc-50 relative lg:min-h-[450px] gap-6">
               <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:30px_30px] pointer-events-none"></div>
               <PaymentWidget t={t} />
@@ -850,7 +915,7 @@ function LandingContent({ onNavigateError, onConnect, t, lang, setLang, standard
           </div>
         </section>
 
-        {/* CRM SECTION */}
+        {/* СЕКЦИЯ CRM */}
         <section id="crm" className="border-b border-black bg-[#CCFF00] overflow-hidden text-left scroll-mt-[72px] w-full">
           <div className="flex flex-col lg:grid lg:grid-cols-12 w-full text-left text-black">
             <div className={`lg:col-span-6 py-12 md:py-16 ${standardPadding} flex flex-col justify-center text-left`}>
@@ -862,6 +927,7 @@ function LandingContent({ onNavigateError, onConnect, t, lang, setLang, standard
                 <CompactFeature icon={TrendingUp} title={t.crm.f2} desc={t.crm.f2_desc} />
               </div>
             </div>
+            {/* Визуальная часть с фейковым потоком данных из кошельков */}
             <div className="lg:col-span-6 py-12 md:py-16 px-6 flex items-center justify-center border-t lg:border-b-0 lg:border-l border-black bg-[#CCFF00]">
               <div className="w-full max-w-md border-2 border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
                 <div className="bg-black text-white p-3 border-b-2 border-black flex justify-between items-center text-white">
@@ -899,7 +965,7 @@ function LandingContent({ onNavigateError, onConnect, t, lang, setLang, standard
           </div>
         </section>
 
-        {/* LOYALTY SECTION */}
+        {/* СЕКЦИЯ ЛОЯЛЬНОСТИ */}
         <section id="loyalty" className="border-b border-black bg-white overflow-hidden text-left scroll-mt-[72px] w-full">
           <div className="flex flex-col lg:grid lg:grid-cols-12 w-full text-black text-left">
             <div className={`lg:col-span-6 py-12 md:py-16 ${standardPadding} flex flex-col justify-center text-left`}>
@@ -911,13 +977,14 @@ function LandingContent({ onNavigateError, onConnect, t, lang, setLang, standard
                 <CompactFeature icon={Share2} title={t.loyalty.f2} desc={t.loyalty.f2_desc} />
               </div>
             </div>
+            {/* Визуальная часть с интерактивным минтингом NFT */}
             <div className="lg:col-span-6 py-12 md:py-16 px-6 flex items-center justify-center border-t lg:border-b-0 lg:border-l border-black bg-zinc-50 relative min-h-[400px]">
               <NFTTerminal t={t} />
             </div>
           </div>
         </section>
 
-        {/* FITTING SECTION */}
+        {/* СЕКЦИЯ ПРИМЕРКИ */}
         <section id="fitting" className="border-b border-black bg-zinc-50 overflow-hidden text-left scroll-mt-[72px] w-full">
           <div className="flex flex-col lg:grid lg:grid-cols-12 w-full text-black text-left">
             <div className={`lg:col-span-6 py-12 md:py-16 ${standardPadding} flex flex-col justify-center text-left`}>
@@ -929,6 +996,7 @@ function LandingContent({ onNavigateError, onConnect, t, lang, setLang, standard
                 <CompactFeature icon={Heart} title={t.fitting.f2} desc={t.fitting.f2_desc} />
               </div>
             </div>
+            {/* Визуальная часть с интерактивной 3D примеркой */}
             <div className="lg:col-span-6 py-12 md:py-16 px-6 flex items-center justify-center border-t lg:border-b-0 lg:border-l border-black bg-white relative">
               <div className="absolute inset-0 opacity-5 bg-[linear-gradient(#000_1px,transparent_1px),linear-gradient(90deg,#000_1px,transparent_1px)] [background-size:40px_40px] pointer-events-none"></div>
               <FittingTerminal t={t} />
@@ -936,7 +1004,7 @@ function LandingContent({ onNavigateError, onConnect, t, lang, setLang, standard
           </div>
         </section>
         
-        {/* PRICING SECTION */}
+        {/* ТАРИФЫ */}
         <section id="rates" className="border-b border-black text-left scroll-mt-[72px] w-full">
           <div className="grid grid-cols-1 lg:grid-cols-3 w-full border-t border-black bg-white">
             {plansData.map((p) => (
@@ -977,15 +1045,47 @@ function LandingContent({ onNavigateError, onConnect, t, lang, setLang, standard
   );
 }
 
+/* Страница подачи заявки на бета-тест. 
+  Содержит анкету и список преимуществ.
+*/
 function BetaAccessPage({ onBack, t, lang, setLang, standardPadding }) {
   const [status, setStatus] = useState('idle'); 
   const [formData, setFormData] = useState({ brand: '', site: '', tg: '', name: '', volume: '' });
   const volumeOptions = lang === 'KO' ? ['< 200만', '200만 – 1000만', '1000만 – 5000만', '5000만+'] : ['< 2K', '2K – 10K', '10K – 50K', '50K+'];
 
-  const handleSubmit = (e) => { 
+  /* ОБНОВЛЕННАЯ ФУНКЦИЯ ОТПРАВКИ: 
+    Теперь она не просто "ждет", а делает реальный запрос к вашему Telegram-боту 
+    через API скрипт api/send-to-tg.js
+  */
+  const handleSubmit = async (e) => { 
     e.preventDefault(); 
     setStatus('processing'); 
-    setTimeout(() => setStatus('success'), 1500);
+
+    try {
+      // Делаем сетевой запрос к вашему API-обработчику
+      const response = await fetch('/api/send-to-tg.js', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData), // Передаем данные из полей ввода
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Если бот ответил успешно — показываем экран благодарности
+        setStatus('success');
+      } else {
+        // Если произошла ошибка (например, неверный токен) — сообщаем об этом
+        console.error('Submission failed:', result.error);
+        setStatus('idle');
+        // Здесь можно добавить показ ошибки пользователю через UI
+      }
+    } catch (error) {
+      console.error('Network error:', error);
+      setStatus('idle');
+    }
   };
 
   return (
@@ -1014,6 +1114,7 @@ function BetaAccessPage({ onBack, t, lang, setLang, standardPadding }) {
           <div className="lg:col-span-7 text-left">
             {status === 'idle' ? (
               <>
+                {/* Форма регистрации */}
                 <div className="bg-white border-2 md:border-4 border-black p-6 md:p-12 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] md:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] text-left">
                   <form onSubmit={handleSubmit} className="space-y-8 md:space-y-10 text-left">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 text-left">
@@ -1055,6 +1156,7 @@ function BetaAccessPage({ onBack, t, lang, setLang, standardPadding }) {
                 </div>
               </>
             ) : status === 'processing' ? (
+              // Экран отправки формы
               <div className="bg-white border-4 border-black p-8 md:p-12 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] h-full flex flex-col items-center justify-center text-center space-y-8 py-24 min-h-[400px]">
                 <Loader2 size={48} className="animate-spin opacity-20 text-black mx-auto" />
                 <div className="space-y-2 text-black">
@@ -1063,6 +1165,7 @@ function BetaAccessPage({ onBack, t, lang, setLang, standardPadding }) {
                 </div>
               </div>
             ) : (
+              // Экран успешной регистрации
               <div className="bg-[#CCFF00] border-4 border-black p-8 md:p-20 text-center shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] animate-in zoom-in-95 duration-500 min-h-[400px] flex flex-col justify-center items-center">
                 <div className="w-20 h-20 md:w-24 md:h-24 bg-black text-[#CCFF00] rounded-full flex items-center justify-center mx-auto mb-10 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)] text-[#CCFF00]">
                   <Check size={48} strokeWidth={4} />
@@ -1082,23 +1185,33 @@ function BetaAccessPage({ onBack, t, lang, setLang, standardPadding }) {
 
 // --- КОРНЕВОЙ КОМПОНЕНТ ---
 
+/* Главный компонент приложения. 
+  Он управляет навигацией между страницами (Лендинг, Форма, 404) 
+  и хранит выбранный пользователем язык.
+*/
 export default function App() {
-  const [page, setPage] = useState('landing'); 
-  const [lang, setLang] = useState('RU'); 
+  const [page, setPage] = useState('landing'); // 'landing', 'beta' или '404'
+  const [lang, setLang] = useState('RU'); // 'RU', 'EN', 'ES', 'KO'
   const t = translations[lang] || translations['RU'];
   const standardPadding = "px-6 sm:px-12 lg:px-16";
 
+  // Функции для перехода между страницами
   const handleBack = () => { setPage('landing'); window.scrollTo({top: 0, behavior: 'auto'}); };
   const handleNavigateError = () => { setPage('404'); window.scrollTo({top: 0, behavior: 'auto'}); };
   const handleConnect = () => { setPage('beta'); window.scrollTo({top: 0, behavior: 'auto'}); };
 
   return (
     <div className="min-h-screen bg-white font-sans text-black overflow-x-hidden selection:bg-[#CCFF00] selection:text-black w-full">
+      {/* Условный рендеринг: 
+        В зависимости от того, что записано в переменной 'page', 
+        мы показываем ту или иную страницу.
+      */}
       {page === 'landing' ? (
         <LandingContent onNavigateError={handleNavigateError} onConnect={handleConnect} t={t} lang={lang} setLang={setLang} standardPadding={standardPadding} />
       ) : page === 'beta' ? (
         <BetaAccessPage onBack={handleBack} t={t} lang={lang} setLang={setLang} standardPadding={standardPadding} />
       ) : (
+        // Страница 404 (Если страница не найдена или в разработке)
         <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 text-center animate-in zoom-in-95 duration-500">
           <div className="w-full max-w-lg space-y-12">
             <div className="relative text-black">
@@ -1118,6 +1231,9 @@ export default function App() {
         </div>
       )}
 
+      {/* CSS Стили: 
+        Здесь описываются анимации (движение бегущей строки, мерцание сканера и т.д.)
+      */}
       <style>{`
         @keyframes marqueeInfinite { 0% { transform: translateX(0); } 100% { transform: translateX(-25%); } }
         .animate-marqueeInfinite { display: flex; width: max-content; animation: marqueeInfinite 20s linear infinite; }
