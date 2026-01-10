@@ -13,7 +13,7 @@ export default async function handler(req, res) {
 
   // Форматируем сообщение для Telegram (Markdown)
   const text = `
-🚀 *Новая заявка: THYSS CORE*
+🚀 *Новая заявка: Бета-тест THYSS*
 ━━━━━━━━━━━━━━━━━━
 👤 *Имя:* ${name || 'Не указано'}
 🏢 *Бренд:* ${brand || 'Не указано'}
@@ -46,4 +46,5 @@ export default async function handler(req, res) {
     console.error('Server Error:', error);
     return res.status(500).json({ success: false, error: error.message });
   }
+
 }
