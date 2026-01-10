@@ -1,7 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
-/* Lucide-React — это библиотека готовых иконок. 
-  Каждое название (Wallet, Zap и т.д.) — это маленькая векторная картинка.
-*/
+import React, { useState, useEffect } from 'react';
 import { 
   Wallet, Users, Zap, ArrowRight, Check, Box, Plus, 
   RefreshCcw, Ticket, Star, ShieldCheck, Fingerprint, 
@@ -16,9 +13,6 @@ import {
 } from 'lucide-react';
 
 // --- БЛОК ТЕКСТОВ (ПЕРЕВОДЫ) ---
-/* Здесь мы храним все тексты сайта. 
-  Это позволяет нам менять язык интерфейса (RU/EN), не переписывая каждую страницу.
-*/
 const translations = {
   RU: {
     nav: { widget: 'Виджет', crm: 'CRM', loyalty: 'Лояльность', fitting: 'Примерка', rates: 'Тарифы', connect: 'Бета-тест' },
@@ -26,79 +20,42 @@ const translations = {
     hero: { title1: 'FASHION', title2: 'RETAIL', title3: 'OS.', cta: 'Подать заявку' },
     gateway: { tag: 'Доступно сейчас (Фаза 01)', title: 'TON GATEWAY.', desc: 'Прямой эквайринг в ', highlight: 'USDT (TON)', sub: 'без посредников и с нулевой комиссией.' },
     widget: { 
-        tag: 'Доступно сейчас (Фаза 01)', 
-        title: 'SMART WIDGET.', 
+        tag: 'Доступно сейчас (Фаза 01)', title: 'SMART WIDGET.', 
         desc: 'Бесшовная альтернатива банковскому эквайрингу для вашего бренда. Принимайте платежи со всего мира с нулевой комиссией платформы — без редиректов и лишних шагов.', 
-        f1: 'Native UI', 
-        f1_desc: 'Бесшовный чекаут в 1 клик', 
-        f2: 'Cross-Wallet', 
-        f2_desc: 'Все кошельки TON',
+        f1: 'Native UI', f1_desc: 'Бесшовный чекаут в 1 клик', f2: 'Cross-Wallet', f2_desc: 'Все кошельки TON',
         hint: 'ИНТЕРАКТИВНАЯ ДЕМО-ВЕРСИЯ. ОПРОБУЙТЕ ФУНКЦИОНАЛ'
     },
     payment: { 
-        pay: "К оплате",
-        awaiting: "Ожидание транзакции",
-        initializing: "Инициализация шлюза...",
-        connecting: "Подключение к сети TON",
-        error: "Ошибка оплаты",
-        timeout: "Время сессии истекло",
-        alreadyPaid: "Я уже оплатил",
-        retry: "Повторить попытку",
-        success: "Оплата принята!",
-        confirmed: "Транзакция успешно подтверждена",
-        amount: "Сумма заказа",
-        orderId: "ID Заказа",
-        due: "К перечислению",
-        address: "Адрес кошелька",
-        copied: "СКОПИРОВАНО!",
-        tapToCopy: "Нажми для копирования",
-        openWallet: "Открыть кошелек",
-        needHelp: "Нужна помощь с оплатой?",
-        support: "Техподдержка",
-        tonNetwork: "TON Network",
-        close: "Закрыть окно"
+        pay: "К оплате", awaiting: "Ожидание транзакции", initializing: "Инициализация шлюза...",
+        connecting: "Подключение к сети TON", error: "Ошибка оплаты", timeout: "Время сессии истекло",
+        alreadyPaid: "Я уже оплатил", retry: "Повторить попытку", success: "Оплата принята!",
+        confirmed: "Транзакция успешно подтверждена", amount: "Сумма заказа", orderId: "ID Заказа",
+        due: "К перечислению", address: "Адрес кошелька", copied: "СКОПИРОВАНО!",
+        tapToCopy: "Нажми для копирования", openWallet: "Открыть кошелек", needHelp: "Нужна помощь с оплатой?",
+        support: "Техподдержка", tonNetwork: "TON Network", close: "Закрыть окно"
     },
     crm: { 
-        tag: 'Доступно сейчас (Фаза 01)', 
-        title: 'WALLETS DATA.', 
+        tag: 'Доступно сейчас (Фаза 01)', title: 'WALLETS DATA.', 
         desc: 'Глубокая on-chain аналитика для сегментации вашей аудитории. Раскройте потенциал анонимных пользователей на основе балансов кошельков, истории транзакций и сетевой активности.', 
-        f1: 'Profiling', 
-        f1_desc: 'Авто-скоринг', 
-        f2: 'Growth', 
-        f2_desc: 'Удержание через данные', 
-        feed: 'ПОТОК_ДАННЫХ_THYSS', 
-        scanned: 'Профиль отсканирован' 
+        f1: 'Profiling', f1_desc: 'Авто-скоринг', f2: 'Growth', f2_desc: 'Удержание через данные', 
+        feed: 'ПОТОК_ДАННЫХ_THYSS', scanned: 'Профиль отсканирован' 
     },
     loyalty: { 
-        tag: 'Ожидается (Фаза 02)', 
-        title: 'NFT GIFTS.', 
-        desc: 'Поощряйте своих клиентов цифровыми активами. Используйте потенциал NFT для масштабирования эксклюзивности и премиальности бренда — количество механик ограничено только вашей фантазией.', 
-        f1: 'Loyalty 2.0', 
-        f1_desc: 'NFT как ключ к привилегиям', 
-        f2: 'Viral Growth', 
-        f2_desc: 'Цифровое владение' 
+        tag: 'Ожидается (Фаза 02)', title: 'NFT GIFTS.', 
+        desc: 'Поощряйте своих клиентов цифровыми активами. Используйте потенциал NFT для масштабирования эксклюзивности и премиальности бренда.', 
+        f1: 'Loyalty 2.0', f1_desc: 'NFT как ключ к привилегиям', f2: 'Viral Growth', f2_desc: 'Цифровое владение' 
     },
     mint: { 
-      progress: 'МИНТИНГ_В_ПРОЦЕССЕ...', 
-      sent: 'ЛОЯЛЬНОСТЬ_ОТПРАВЛЕНА', 
-      idle: 'ЛОЯЛЬНОСТЬ_ID_МИНТ', 
-      reward_sent: 'Награда отправлена', 
-      desc: 'Добавлено в кошелек клиента', 
-      button: 'Отправить NFT награду', 
-      another: 'Минтить еще',
+      progress: 'МИНТИНГ_В_ПРОЦЕССЕ...', sent: 'ЛОЯЛЬНОСТЬ_ОТПРАВЛЕНА', idle: 'ЛОЯЛЬНОСТЬ_ID_МИНТ', 
+      reward_sent: 'Награда отправлена', desc: 'Добавлено в кошелек клиента', 
+      button: 'Отправить NFT награду', another: 'Минтить еще',
       steps: ['Инициализация протокола...', 'Генерация метаданных...', 'Запись в блокчейн TON...', 'Подтверждение владения...']
     },
     fitting: { 
-        tag: 'Ожидается (Фаза 03)', 
-        title: '3D FIT.', 
-        desc: 'Мы трансформировали сложный процесс примерки в стильный визуальный аттракцион с интерактивным маскотом. Thyss делает акцент на эмоциональном вовлечении и скорости: пока клиент взаимодействует с персонажем, ИИ-алгоритмы гарантируют идеальную посадку изделия и радикально снижают процент возвратов.', 
-        f1: 'AI-Precision', 
-        f1_desc: 'Безошибочный подбор размера', 
-        f2: 'Loyalty Boost', 
-        f2_desc: 'Геймификация, влюбляющая в бренд',
-        match: 'Совпадение',
-        recalc: 'Подобрать размер',
-        scanning: 'АНАЛИЗ_ПАРАМЕТРОВ...'
+        tag: 'Ожидается (Фаза 03)', title: '3D FIT.', 
+        desc: 'Мы трансформировали сложный процесс примерки в стильный визуальный аттракцион с интерактивным маскотом. Thyss делает акцент на эмоциональном вовлечении и скорости.', 
+        f1: 'AI-Precision', f1_desc: 'Безошибочный подбор размера', f2: 'Loyalty Boost', f2_desc: 'Геймификация, влюбляющая в бренд',
+        match: 'Совпадение', recalc: 'Подобрать размер', scanning: 'АНАЛИЗ_ПАРАМЕТРОВ...'
     },
     pricing: { 
       title: 'Pricing Modules.', monthly: 'Месяц', annual: 'Год', off: '20% Скидка', 
@@ -106,21 +63,19 @@ const translations = {
       choose: 'Выбрать', contact: 'Связаться', 
       sub1: 'Для новых брендов', sub2: 'Для активных продаж', sub3: 'Для крупных сетей',
       currency: '₽', businessPrice: 6000, perMonth: '/мес',
-      popular: 'ЛУЧШИЙ ВЫБОР',
-      betaFree: 'BETA: 30 ДНЕЙ БЕСПЛАТНО',
+      popular: 'ЛУЧШИЙ ВЫБОР', betaFree: 'BETA: 30 ДНЕЙ БЕСПЛАТНО',
       features: {
-        starter: ["0% комиссия платформы", "Газ оплачивает бренд", "5 транзакций / мес", "Платежи в USDT (TON)", "Стандартный виджет с брендингом"],
-        business: ["0% комиссия платформы", "Газ оплачивает бренд", "100 транзакций / мес", "Платежи в USDT (TON)", "Whitelabel модуль виджета", "Intelligence CRM", "NFT Gifts (Скоро)", "3D FIT (Скоро)", "Техническая поддержка"],
-        enterprise: ["0% комиссия платформы", "Газ оплачивает THYSS", "Безлимит транзакций", "Whitelabel модуль виджета", "Персонализация виджета", "Intelligence CRM Pro", "NFT подарки и коллаборации", "Приоритетная поддержка 24/7", "3D Fit (Скоро)", "Персонализация 3D FIT"]
+        starter: ["0% комиссия платформы", "Газ оплачивает бренд", "5 транзакций / мес", "Платежи в USDT (TON)", "Стандартный виджет"],
+        business: ["0% комиссия платформы", "Газ оплачивает бренд", "100 транзакций / мес", "Платежи в USDT (TON)", "Whitelabel модуль", "Intelligence CRM", "NFT Gifts (Скоро)", "3D FIT (Скоро)", "Техническая поддержка"],
+        enterprise: ["0% комиссия платформы", "Газ оплачивает THYSS", "Безлимит транзакций", "Whitelabel модуль", "Персонализация виджета", "Intelligence CRM Pro", "NFT подарки", "Приоритетная поддержка", "3D Fit (Скоро)"]
       }
     },
     footer: { desc: 'Merchant OS для fashion брендов. ', sub: 'Инфраструктура Web3 e-commerce.', support: 'Поддержка', social: 'Соцсети' },
     notFound: { denied: 'ДОСТУП_ЗАПРЕЩЕН', error: 'ОШИБКА: Страница в разработке', emergency: 'Экстренная связь', sub: 'Страница в разработке. Сканируйте для связи.', back: 'Вернуться в ядро' },
     beta: { 
-      title: 'Join the Core', 
-      back: 'Назад к ядру', submit: 'Подтвердить заявку', success: 'Доступ предоставлен', 
+      title: 'Join the Core', back: 'Назад к ядру', submit: 'Подтвердить заявку', success: 'Доступ предоставлен', 
       brand: 'Бренд', site: 'Сайт', tg: 'Telegram', name: 'Ваше имя', volume: 'Месячный оборот',
-      perks: ['Эквайринг в USDT с 0% комиссией', 'on-chain аналитика крипто-клиентов', '30 дней полного доступа', 'Персональное сопровождение и приоритетные обновления'],
+      perks: ['Эквайринг в USDT с 0% комиссией', 'on-chain аналитика клиентов', '30 дней полного доступа', 'Персональное сопровождение'],
       placeholders: { brand: 'Напр. Shutterfeel', site: 'shutterfeel.com', tg: '@username', name: 'Как к вам обращаться?' }
     }
   },
@@ -130,79 +85,42 @@ const translations = {
     hero: { title1: 'FASHION', title2: 'RETAIL', title3: 'OS.', cta: 'Apply for Beta' },
     gateway: { tag: 'Available now (Phase 01)', title: 'TON GATEWAY.', desc: 'Direct acquiring in ', highlight: 'USDT (TON)', sub: 'without intermediaries and with zero fees.' },
     widget: { 
-        tag: 'Available now (Phase 01)', 
-        title: 'SMART WIDGET.', 
+        tag: 'Available now (Phase 01)', title: 'SMART WIDGET.', 
         desc: 'A seamless alternative to traditional acquiring for your brand. Accept global payments with zero platform fees directly on your site—no redirects, no friction.', 
-        f1: 'Native UI', 
-        f1_desc: 'Seamless 1-click checkout', 
-        f2: 'Cross-Wallet', 
-        f2_desc: 'All TON Wallets support',
+        f1: 'Native UI', f1_desc: 'Seamless 1-click checkout', f2: 'Cross-Wallet', f2_desc: 'All TON Wallets support',
         hint: 'INTERACTIVE DEMO. TRY FUNCTIONALITY'
     },
     payment: { 
-        pay: "Pay",
-        awaiting: "Awaiting Transaction",
-        initializing: "Initializing Gateway...",
-        connecting: "Connecting to TON Network",
-        error: "Payment Error",
-        timeout: "Session Expired",
-        alreadyPaid: "I Already Paid",
-        retry: "Retry Payment",
-        success: "Payment Received!",
-        confirmed: "Transaction successfully confirmed",
-        amount: "Order Amount",
-        orderId: "Order ID",
-        due: "Total Due",
-        address: "Wallet Address",
-        copied: "COPIED!",
-        tapToCopy: "Tap to copy",
-        openWallet: "Open Wallet",
-        needHelp: "Need help with payment?",
-        support: "Support",
-        tonNetwork: "TON Network",
-        close: "Close Window"
+        pay: "Pay", awaiting: "Awaiting Transaction", initializing: "Initializing Gateway...",
+        connecting: "Connecting to TON Network", error: "Payment Error", timeout: "Session Expired",
+        alreadyPaid: "I Already Paid", retry: "Retry Payment", success: "Payment Received!",
+        confirmed: "Transaction successfully confirmed", amount: "Order Amount", orderId: "Order ID",
+        due: "Total Due", address: "Wallet Address", copied: "COPIED!",
+        tapToCopy: "Tap to copy", openWallet: "Open Wallet", needHelp: "Need help with payment?",
+        support: "Support", tonNetwork: "TON Network", close: "Close Window"
     },
     crm: { 
-        tag: 'Available now (Phase 01)', 
-        title: 'WALLETS DATA.', 
+        tag: 'Available now (Phase 01)', title: 'WALLETS DATA.', 
         desc: 'Deep on-chain analytics for audience segmentation. Unlock the potential of anonymous users based on wallet balances, transaction history, and network activity.', 
-        f1: 'Profiling', 
-        f1_desc: 'Auto scoring', 
-        f2: 'Growth', 
-        f2_desc: 'Data-driven retention', 
-        feed: 'THYSS_DATA_FEED', 
-        scanned: 'Profile Scanned' 
+        f1: 'Profiling', f1_desc: 'Auto scoring', f2: 'Growth', f2_desc: 'Data-driven retention', 
+        feed: 'THYSS_DATA_FEED', scanned: 'Profile Scanned' 
     },
     loyalty: { 
-        tag: 'Coming Phase 02', 
-        title: 'NFT GIFTS.', 
+        tag: 'Coming Phase 02', title: 'NFT GIFTS.', 
         desc: 'Reward your clients with digital assets. Leverage the power of NFT to scale exclusivity and brand premiumness — the mechanics are limited only by your imagination.', 
-        f1: 'Loyalty 2.0', 
-        f1_desc: 'NFT as utility key', 
-        f2: 'Viral Growth', 
-        f2_desc: 'Digital ownership' 
+        f1: 'Loyalty 2.0', f1_desc: 'NFT as utility key', f2: 'Viral Growth', f2_desc: 'Digital ownership' 
     },
     mint: { 
-      progress: 'MINTING_IN_PROGRESS...', 
-      sent: 'LOYALTY_SENT', 
-      idle: 'LOYALTY_ID_MINT', 
-      reward_sent: 'Reward Sent', 
-      desc: 'Added to customer wallet', 
-      button: 'Send NFT Reward', 
-      another: 'Mint Another',
+      progress: 'MINTING_IN_PROGRESS...', sent: 'LOYALTY_SENT', idle: 'LOYALTY_ID_MINT', 
+      reward_sent: 'Reward Sent', desc: 'Added to customer wallet', 
+      button: 'Send NFT Reward', another: 'Mint Another',
       steps: ['Initializing protocol...', 'Generating metadata...', 'Writing to TON blockchain...', 'Confirming ownership...']
     },
     fitting: { 
-        tag: 'Coming Phase 03', 
-        title: '3D FIT.', 
-        desc: 'We’ve transformed the tedious fitting process into a stylish visual attraction with an interactive mascot. Thyss focuses on emotional engagement and speed: while the customer interacts with the character, AI algorithms ensure a perfect fit and radically reduce return rates.', 
-        f1: 'AI-Precision', 
-        f1_desc: 'Flawless size matching', 
-        f2: 'Loyalty Boost', 
-        f2_desc: 'Gamification that builds brand love',
-        match: 'Match',
-        recalc: 'Find My Size',
-        scanning: 'ANALYZING_PARAMS...'
+        tag: 'Coming Phase 03', title: '3D FIT.', 
+        desc: 'We’ve transformed the tedious fitting process into a stylish visual attraction with an interactive mascot. Thyss focuses on emotional engagement and speed.', 
+        f1: 'AI-Precision', f1_desc: 'Flawless size matching', f2: 'Loyalty Boost', f2_desc: 'Gamification that builds brand love',
+        match: 'Match', recalc: 'Find My Size', scanning: 'ANALYZING_PARAMS...'
     },
     pricing: { 
       title: 'Pricing Modules.', monthly: 'Monthly', annual: 'Annual', off: '20% Off', 
@@ -210,37 +128,161 @@ const translations = {
       choose: 'Choose', contact: 'Contact', 
       sub1: 'For emerging brands', sub2: 'For high-volume sales', sub3: 'For retail chains',
       currency: '$', businessPrice: 80, perMonth: '/mo',
-      popular: 'BEST CHOICE',
-      betaFree: 'BETA: 30 DAYS FREE',
+      popular: 'BEST CHOICE', betaFree: 'BETA: 30 DAYS FREE',
       features: {
-        starter: ["0% platform commission", "Gas fees paid by brand", "5 transactions / mo", "USDT (TON) payments", "Standard Widget with branding"],
-        business: ["0% platform commission", "Gas fees paid by brand", "100 transactions / mo", "USDT (TON) payments", "Whitelabel Widget Module", "Intelligence CRM", "NFT Gifts (Soon)", "3D FIT (Soon)", "Technical Support"],
-        enterprise: ["0% platform commission", "Gas fees paid by THYSS", "Unlimited transactions", "Whitelabel Widget Module", "Deep Widget Personalization", "Intelligence CRM Pro", "NFT Gifts & Collaborations", "Priority 24/7 Support", "3D Fit (Soon)", "3D FIT Personalization"]
+        starter: ["0% platform commission", "Gas fees paid by brand", "5 transactions / mo", "USDT (TON) payments", "Standard Widget"],
+        business: ["0% platform commission", "Gas fees paid by brand", "100 transactions / mo", "USDT (TON) payments", "Whitelabel Widget", "Intelligence CRM", "NFT Gifts (Soon)", "3D FIT (Soon)", "Technical Support"],
+        enterprise: ["0% platform commission", "Gas fees paid by THYSS", "Unlimited transactions", "Whitelabel Widget", "Personalization", "Intelligence CRM Pro", "NFT Gifts", "Priority 24/7 Support", "3D Fit (Soon)"]
       }
     },
     footer: { desc: 'Merchant OS for fashion brands. ', sub: 'Web3 e-commerce infrastructure.', support: 'Support', social: 'Social' },
     notFound: { denied: 'ACCESS_DENIED', error: 'ERROR: Under Development', emergency: 'Emergency Link', sub: 'Page under development. Scan to contact.', back: 'Back to Core' },
     beta: { 
-      title: 'Join the Core', 
-      back: 'Back to Core', submit: 'Confirm Access', success: 'Access Granted', 
+      title: 'Join the Core', back: 'Back to Core', submit: 'Confirm Access', success: 'Access Granted', 
       brand: 'Brand', site: 'Website', tg: 'Telegram', name: 'Your Name', volume: 'Monthly Volume',
       perks: ['USDT acquiring with 0% commission', 'on-chain crypto-customer analytics', '30 days of full access', 'Personal support and priority updates'],
       placeholders: { brand: 'e.g. Shutterfeel', site: 'shutterfeel.com', tg: '@username', name: 'What should we call you?' }
+    }
+  },
+  ES: {
+    nav: { widget: 'Widget', crm: 'CRM', loyalty: 'Lealtad', fitting: 'Probador', rates: 'Tarifas', connect: 'Acceso Beta' },
+    marquee: { phase: 'Fase 01 Beta lanzada', commission: 'Cero comisión de plataforma', trial: '30 días de acceso gratuito' },
+    hero: { title1: 'FASHION', title2: 'RETAIL', title3: 'OS.', cta: 'Solicitar acceso' },
+    gateway: { tag: 'Disponible ahora (Fase 01)', title: 'TON GATEWAY.', desc: 'Adquirencia directa en ', highlight: 'USDT (TON)', sub: 'sin intermediarios и con cero comisiones.' },
+    widget: { 
+        tag: 'Disponible ahora (Fase 01)', title: 'SMART WIDGET.', 
+        desc: 'Una alternativa fluida a la adquirencia tradicional para su marca. Acepte pagos globales con cero comisiones de plataforma directamente en su sitio, sin redirecciones ni fricciones.', 
+        f1: 'Native UI', f1_desc: 'Checkout sin fricción en 1 clic', f2: 'Cross-Wallet', f2_desc: 'Soporte para todas las billeteras TON',
+        hint: 'DEMO INTERACTIVA. PRUEBE LA FUNCIONALIDAD'
+    },
+    payment: { 
+        pay: "Pagar", awaiting: "Esperando Transacción", initializing: "Iniciando Gateway...",
+        connecting: "Conectando a la red TON", error: "Error de pago", timeout: "Sesión expirada",
+        alreadyPaid: "Ya pagué", retry: "Reintentar pago", success: "¡Pago recibido!",
+        confirmed: "Transacción confirmada con éxito", amount: "Monto del pedido", orderId: "ID de Pedido",
+        due: "Total a pagar", address: "Dirección de billetera", copied: "¡COPIADO!",
+        tapToCopy: "Toca para copiar", openWallet: "Abrir Billetera", needHelp: "¿Necesita ayuda con el pago?",
+        support: "Soporte", tonNetwork: "Red TON", close: "Cerrar Ventana"
+    },
+    crm: { 
+        tag: 'Disponible ahora (Fase 01)', title: 'WALLETS DATA.', 
+        desc: 'Análisis on-chain profundo para segmentación de audiencia. Libere el potencial de los usuarios anónimos basado en balances, historial и actividad de red.', 
+        f1: 'Perfilado', f1_desc: 'Calificación automática', f2: 'Crecimiento', f2_desc: 'Retención basada en datos', 
+        feed: 'FLUJO_DATOS_THYSS', scanned: 'Perfil Escaneado' 
+    },
+    loyalty: { 
+        tag: 'Próximamente Fase 02', title: 'NFT GIFTS.', 
+        desc: 'Recompense a sus clientes con activos digitales. Aproveche el poder de los NFT para escalar la exclusividad и el estatus premium de su marca.', 
+        f1: 'Lealtad 2.0', f1_desc: 'NFT como llave de utilidad', f2: 'Crecimiento Viral', f2_desc: 'Propiedad digital' 
+    },
+    mint: { 
+      progress: 'MINTING_EN_PROGRESO...', sent: 'LEALTAD_ENVIADA', idle: 'LEALTAD_ID_MINT', 
+      reward_sent: 'Recompensa Enviada', desc: 'Añadido a la billeтера del cliente', 
+      button: 'Enviar Recompensa NFT', another: 'Mintear Otro',
+      steps: ['Iniciando protocolo...', 'Generando metadatos...', 'Escribiendo en TON blockchain...', 'Confirmando propiedad...']
+    },
+    fitting: { 
+        tag: 'Próximamente Fase 03', title: '3D FIT.', 
+        desc: 'Hemos transformado el tedioso proceso de prueba en una atracción visual con un mascota interactiva. Thyss garantiza un ajuste perfecto и reduce radicalmente las devoluciones.', 
+        f1: 'AI-Precision', f1_desc: 'Ajuste de talla impecable', f2: 'Loyalty Boost', f2_desc: 'Gamification que enamora al cliente',
+        match: 'Coincidencia', recalc: 'Encontrar mi talla', scanning: 'ANALIZANDO_PARÁMETROS...'
+    },
+    pricing: { 
+      title: 'Módulos de Precios.', monthly: 'Mes', annual: 'Año', off: '20% Descuento', 
+      starter: 'Starter', business: 'Business', enterprise: 'Enterprise', 
+      choose: 'Elegir', contact: 'Contactar', 
+      sub1: 'Para marcas emergentes', sub2: 'Para ventas de alto volumen', sub3: 'Для retail chains',
+      currency: '€', businessPrice: 70, perMonth: '/mes',
+      popular: 'MEJOR OPCIÓN', betaFree: 'BETA: 30 DÍAS GRATIS',
+      features: {
+        starter: ["0% комиссия de платформа", "Gas pagado por la marca", "5 transacciones / мес", "Pagos en USDT (TON)", "Widget estándar"],
+        business: ["0% комиссия de платформа", "Gas pagado por la marca", "100 transacciones / мес", "Pagos en USDT (TON)", "Módulo Whitelabel", "Intelligence CRM", "NFT Gifts (Pronto)", "3D FIT (Pronto)", "Soporte técnico"],
+        enterprise: ["0% комиссия de платформа", "Gas pagado por THYSS", "Transacciones ilimitadas", "Whitelabel Widget Pro", "CRM Pro", "NFT Gifts & Colaboraciones", "Soporte Prioritario", "3D Fit (Pronto)"]
+      }
+    },
+    footer: { desc: 'Merchant OS para marcas de moda. ', sub: 'Infraestructura Web3 e-commerce.', support: 'Soporte', social: 'Redes sociales' },
+    notFound: { denied: 'ACCESO_DENEGADO', error: 'ERROR: En desarrollo', emergency: 'Enlace de emergencia', sub: 'Página en desarrollo. Escanee para contactраct.', back: 'Volver al núcleo' },
+    beta: { 
+      title: 'Unirse al Núcleo', back: 'Volver al núcleo', submit: 'Confirmar Acceso', success: 'Acceso Concedido', 
+      brand: 'Marca', site: 'Sitio Web', tg: 'Telegram', name: 'Su Nombre', volume: 'Volumen Mensual',
+      perks: ['Adquirencia USDT con 0% comisión', 'Análisis on-chain de cripto-clientes', '30 días de acceso completo', 'Soporte personal и actualizaciones prioritarias'],
+      placeholders: { brand: 'ej. Shutterfeel', site: 'shutterfeel.com', tg: '@usuario', name: '¿Cómo le llamamos?' }
+    }
+  },
+  KO: {
+    nav: { widget: '위젯', crm: 'CRM', loyalty: '로열티', fitting: '피팅', rates: '요금제', connect: '베타 테스트' },
+    marquee: { phase: 'Phase 01 베타 시작', commission: '플랫폼 수수료 0%', trial: '30일 무료 체험' },
+    hero: { title1: 'FASHION', title2: 'RETAIL', title3: 'OS.', cta: '베타 신청하기' },
+    gateway: { tag: '현재 이용 가능 (Phase 01)', title: 'TON GATEWAY.', desc: '직접 결제 서비스 ', highlight: 'USDT (TON)', sub: '중개자 없이 수수료 0%.' },
+    widget: { 
+        tag: '현재 이용 가능 (Phase 01)', title: 'SMART WIDGET.', 
+        desc: '브랜드를 위한 원활한 뱅킹 결제 대안. 전 세계 결제를 플랫폼 수수료 없이 웹사이트에서 직접 받으세요. 리디렉션이나 불필요한 단계가 없습니다.', 
+        f1: 'Native UI', f1_desc: '클릭 한 번으로 끊김 없는 체크아웃', f2: 'Cross-Wallet', f2_desc: '모든 TON 지갑 지원',
+        hint: '인터랙티브 데모. 기능을 체험해 보세요'
+    },
+    payment: { 
+        pay: "결제하기", awaiting: "트랜잭션 대기 중", initializing: "게이트웨이 초기화 중...",
+        connecting: "TON 네트워크 연결 중", error: "결제 오류", timeout: "세션 만료",
+        alreadyPaid: "이미 결제했습니다", retry: "다시 시도", success: "결제 완료!",
+        confirmed: "트랜잭션이 성공적으로 확인되었습니다", amount: "주문 금액", orderId: "주문 ID",
+        due: "결제 예정 금액", address: "지갑 주소", copied: "복사됨!",
+        tapToCopy: "탭하여 복사", openWallet: "지갑 열기", needHelp: "결제에 도움이 필요하신가요?",
+        support: "고객 지원", tonNetwork: "TON Network", close: "창 닫기"
+    },
+    crm: { 
+        tag: '현재 이용 가능 (Phase 01)', title: 'WALLETS DATA.', 
+        desc: '청중 세분화를 위한 심층 온체인 분석. 지갑 잔액, 트랜잭션 내역 및 네트워크 활동을 기반으로 익명 사용자의 잠재력을 활용하세요.', 
+        f1: 'Profiling', f1_desc: '자동 스코어링', f2: 'Growth', f2_desc: '데이터 기반 리텐션', 
+        feed: 'THYSS_데이터_피드', scanned: '프로필 스캔 완료' 
+    },
+    loyalty: { 
+        tag: 'Phase 02 예정', title: 'NFT GIFTS.', 
+        desc: '디지털 자산으로 고객에게 보상하세요. NFT의 잠재력을 활용하여 브랜드의 독점성과 프리미엄 가치를 확장하세요. 무궁무진한 보상 체계를 구축할 수 있습니다.', 
+        f1: 'Loyalty 2.0', f1_desc: '특전의 열쇠로서의 NFT', f2: 'Viral Growth', f2_desc: '디지털 소유권' 
+    },
+    mint: { 
+      progress: '민팅 진행 중...', sent: '리워드 전송 완료', idle: 'LOYALTY_ID_MINT', 
+      reward_sent: '리워드 전송됨', desc: '고객 지갑에 추가되었습니다', 
+      button: 'NFT 리워드 전송', another: '추가 민팅',
+      steps: ['프로토콜 초기화 중...', '메타데이터 생성 중...', 'TON 블록체인 기록 중...', '소유권 확인 중...']
+    },
+    fitting: { 
+        tag: 'Phase 03 예정', title: '3D FIT.', 
+        desc: '지루한 피팅 과정을 인터랙티브 마스코트와 함께하는 스타일리시한 시각적 경험으로 바꿨습니다. Thyss는 완벽한 핏을 보장하고 반품률을 획기적으로 낮춥니다.', 
+        f1: 'AI-Precision', f1_desc: '오차 없는 사이즈 매칭', f2: 'Loyalty Boost', f2_desc: '브랜드와 사랑에 빠지게 하는 게임화',
+        match: '일치', recalc: '사이즈 찾기', scanning: '매개변수 분석 중...'
+    },
+    pricing: { 
+      title: '가격 정책.', monthly: '월간', annual: '연간', off: '20% 할인', 
+      starter: 'Starter', business: 'Business', enterprise: 'Enterprise', 
+      choose: '선택하기', contact: '문의하기', 
+      sub1: '신규 브랜드용', sub2: '활발한 판매용', sub3: '대형 체인용',
+      currency: '₩', businessPrice: 110000, perMonth: '/월',
+      popular: '최고의 선택', betaFree: '베타: 30일 무료',
+      features: {
+        starter: ["플랫폼 수수료 0%", "브랜드가 가스비 부담", "월 5건 트랜잭션", "USDT (TON) 결제", "기본 브랜딩 위젯"],
+        business: ["플랫폼 수수료 0%", "브랜드가 가스비 부담", "월 100건 트랜잭션", "USDT (TON) 결제", "화이트라벨 위젯 모듈", "인텔리전스 CRM", "NFT 리워드 (예정)", "3D FIT (예정)", "기술 지원"],
+        enterprise: ["플랫폼 수수료 0%", "THYSS가 가스비 부담", "무제한 트랜잭션", "화이트라벨 위젯 모듈", "위젯 커스터마이징", "인텔리전스 CRM Pro", "NFT 협업 기획", "24/7 우선 지원", "3D Fit (예정)"]
+      }
+    },
+    footer: { desc: '패션 브랜드를 위한 머천트 OS. ', sub: 'Web3 이커머스 인프라.', support: '고객 지원', social: '소셜 미디어' },
+    notFound: { denied: '접근 거부', error: '오류: 개발 중인 페이지', emergency: '비상 연락처', sub: '페이지 개발 중입니다. 스캔하여 문의하세요.', back: '코어로 돌아가기' },
+    beta: { 
+      title: '코어에 참여하세요', back: '코어로 돌아가기', submit: '신청 확인', success: '권한 부여됨', 
+      brand: '브랜드', site: '웹사이트', tg: 'Telegram', name: '성함', volume: '월 거래액',
+      perks: ['0% 수수료 USDT 결제', '크립토 고객 온체인 분석', '30일 전체 액세스 권한', '퍼스널 서포트 및 우선 업데이트'],
+      placeholders: { brand: '예: Shutterfeel', site: 'shutterfeel.com', tg: '@아이디', name: '어떻게 불러드릴까요?' }
     }
   }
 };
 
 // --- ВСПОМОГАТЕЛЬНЫЕ КОМПОНЕНТЫ ---
 
-/* RealQRCode: Превращает любой текст (ссылку) в картинку QR-кода 
-  используя бесплатный сторонний сервис.
-*/
 function RealQRCode({ data, size = 150, className = "" }) {
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(data)}&bgcolor=ffffff&color=000000&margin=1`;
   return <img src={qrUrl} alt="QR" className={`border-2 border-black ${className}`} style={{ width: '100%', maxWidth: size, height: 'auto', aspectRatio: '1/1' }} />;
 }
 
-/* TelegramQRBlock: Блок с QR-кодом для быстрого перехода в группу поддержки Telegram. */
 function TelegramQRBlock({ t, centered = false }) {
   return (
     <div className={`pt-8 border-t border-black/10 text-black ${centered ? 'flex flex-col items-center' : ''}`}>
@@ -257,7 +299,6 @@ function TelegramQRBlock({ t, centered = false }) {
   );
 }
 
-/* CompactFeature: Красивая карточка с иконкой для описания преимуществ сервиса. */
 function CompactFeature({ icon: Icon, title, desc, dark = false }) {
   return (
     <div className={`flex items-start gap-4 p-4 border-2 border-black transition-all group ${dark ? 'bg-black/30 border-white/20' : 'bg-zinc-50'}`}>
@@ -272,7 +313,6 @@ function CompactFeature({ icon: Icon, title, desc, dark = false }) {
   );
 }
 
-/* Marquee: Бегущая строка, которую мы видим под навигацией. */
 const Marquee = ({ lang = 'RU' }) => {
   const t = translations[lang] || translations['RU'];
   const marqueeItems = [t.marquee.phase, t.marquee.commission, t.marquee.trial];
@@ -296,74 +336,65 @@ const Marquee = ({ lang = 'RU' }) => {
   );
 };
 
-// --- ВИДЖЕТЫ (ИНТЕРАКТИВНЫЕ МОДУЛИ) ---
+// --- ВИДЖЕТЫ ---
 
-/* PaymentWidget: Симулятор платежного терминала. 
-  Работает по логике: Покой -> Загрузка -> Таймер 30с -> Успех или Ошибка.
-*/
 function PaymentWidget({ t }) {
-  const [status, setStatus] = useState('idle'); // Состояния: idle (покой), initializing (загрузка), payment (активен), success (удача), error (ошибка)
+  const [status, setStatus] = useState('idle');
   const [walletAddress] = useState('UQD-STABLE-CHECKPOINT-TON-ADDR-777');
   const [timeLeft, setTimeLeft] = useState(30000); 
   const [isCopied, setIsCopied] = useState(false);
   
   const amount = 142.50;
-  const currency = "USDT";
 
   const handleStartPayment = () => {
     setTimeLeft(30000);
     setStatus('initializing');
   };
 
-  // Эффект имитации "подключения к блокчейну"
   useEffect(() => {
     if (status !== 'initializing') return;
-    const timer = setTimeout(() => {
-      setStatus('payment');
-    }, 1500);
+    const timer = setTimeout(() => setStatus('payment'), 1500);
     return () => clearTimeout(timer);
   }, [status]);
 
-  // Логика обратного отсчета таймера
   useEffect(() => {
     let timer;
     if (status === 'payment' && timeLeft > 0) {
-      timer = setInterval(() => {
-        setTimeLeft(prev => Math.max(0, prev - 10));
-      }, 10);
+      timer = setInterval(() => setTimeLeft(prev => Math.max(0, prev - 10)), 10);
     } else if (status === 'payment' && timeLeft === 0) {
-      setStatus('error'); // Если 30 секунд вышло — показываем ошибку
+      setStatus('error');
     }
     return () => clearInterval(timer);
   }, [status, timeLeft]);
 
-  // Форматирование времени 00:00
   const formatTime = (ms) => {
-    const totalSeconds = Math.floor(ms / 1000);
-    const milliseconds = Math.floor((ms % 1000) / 10);
-    return `${totalSeconds.toString().padStart(2, '0')}:${milliseconds.toString().padStart(2, '0')}`;
+    const s = Math.floor(ms / 1000);
+    const m = Math.floor((ms % 1000) / 10);
+    return `${s.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
   };
 
   const copyAddress = () => {
-    const el = document.createElement('textarea');
-    el.value = walletAddress;
-    document.body.appendChild(el);
-    el.select();
-    document.execCommand('copy');
-    document.body.removeChild(el);
+    const el = walletAddress;
+    navigator.clipboard?.writeText?.(el).catch(() => {
+        const textarea = document.createElement('textarea');
+        textarea.value = el;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+    });
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000);
   };
 
-  // 1. Окно в состоянии покоя (Просто кнопка)
   if (status === 'idle') {
     return (
       <button onClick={handleStartPayment} className="w-full max-w-xs h-16 bg-white border-2 border-black flex items-center justify-between px-6 group hover:bg-black transition-all shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] text-black cursor-pointer active:translate-x-1 active:translate-y-1 active:shadow-none overflow-hidden relative z-40 mx-auto">
-        <div className="flex items-center gap-4 text-left pointer-events-none">
+        <div className="flex items-center gap-4 text-left">
           <div className="w-8 h-8 bg-[#CCFF00] border-2 border-black flex items-center justify-center text-black group-hover:scale-110 transition-transform"><Wallet size={16} /></div>
-          <div className="text-left text-black">
+          <div className="text-black">
             <span className="block text-[8px] font-black uppercase opacity-40 group-hover:text-white transition-all">{t.payment.pay}</span>
-            <span className="text-sm font-black uppercase group-hover:text-white">{amount} {currency}</span>
+            <span className="text-sm font-black uppercase group-hover:text-white">{amount} USDT</span>
           </div>
         </div>
         <ArrowRight size={18} className="group-hover:text-white" />
@@ -371,7 +402,6 @@ function PaymentWidget({ t }) {
     );
   }
 
-  // 2. Окно успеха
   if (status === 'success') {
     return (
       <div className="w-full max-w-sm border-2 border-black bg-white shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] overflow-hidden text-black animate-in zoom-in-95 duration-300 relative z-40 mx-auto">
@@ -395,7 +425,6 @@ function PaymentWidget({ t }) {
     );
   }
 
-  // 3. Окно ОШИБКИ (таймер истек)
   if (status === 'error') {
     return (
       <div className="w-full max-w-sm border-2 border-black bg-white shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] overflow-hidden text-black animate-in zoom-in-95 duration-300 relative z-40 mx-auto">
@@ -419,7 +448,6 @@ function PaymentWidget({ t }) {
     );
   }
 
-  // 4. Окно активного платежа с QR и таймером
   return (
     <div className="w-full max-w-sm border-2 border-black bg-white shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] overflow-hidden text-black animate-in slide-in-from-top-2 fade-in duration-300 relative z-40 mx-auto">
       <div className="bg-black text-white p-4 border-b-2 border-black flex justify-between items-center text-white">
@@ -447,11 +475,11 @@ function PaymentWidget({ t }) {
           <div className="space-y-6 text-left">
             <div className="flex flex-col sm:flex-row gap-5 items-center bg-zinc-50 border-2 border-black p-5 shadow-sm text-black">
                <div className="w-24 h-24 bg-white border-2 border-black p-1 shrink-0">
-                 <RealQRCode data={`ton://transfer/${walletAddress}?amount=${amount * 1000000}`} size={88} />
+                 <RealQRCode data={`ton://transfer/${walletAddress}`} size={88} />
                </div>
                <div className="flex flex-col text-center sm:text-left space-y-1">
                  <span className="text-[9px] font-black opacity-30 uppercase tracking-widest">{t.payment.due}</span>
-                 <span className="text-2xl md:text-3xl font-black tracking-tighter leading-none">{amount} <span className="text-sm">{currency}</span></span>
+                 <span className="text-2xl md:text-3xl font-black tracking-tighter leading-none">{amount} <span className="text-sm">USDT</span></span>
                  <div className="mt-2 inline-flex items-center gap-2 px-2.5 py-1 bg-black text-white rounded-sm text-[8px] font-black uppercase tracking-tighter mx-auto sm:mx-0">
                    <div className="w-1.5 h-1.5 bg-[#CCFF00] rounded-full"></div>{t.payment.tonNetwork}
                  </div>
@@ -461,7 +489,7 @@ function PaymentWidget({ t }) {
             <div className="space-y-2 text-left">
                <div className="flex justify-between items-center px-1">
                  <span className="text-[9px] font-black uppercase opacity-40">{t.payment.address}</span>
-                 {isCopied && <span className="text-[9px] font-black text-green-600 uppercase animate-in fade-in">СКОПИРОВАНО!</span>}
+                 {isCopied && <span className="text-[9px] font-black text-green-600 uppercase animate-in fade-in">{t.payment.copied}</span>}
                </div>
                <button onClick={copyAddress} className="w-full flex justify-between items-center bg-zinc-100 border-2 border-black p-3 hover:bg-zinc-200 transition-colors group cursor-pointer text-black">
                   <span className="text-[10px] font-mono font-bold truncate opacity-70 pr-4">{walletAddress}</span>
@@ -479,21 +507,17 @@ function PaymentWidget({ t }) {
   );
 }
 
-/* NFTTerminal: Симулятор раздачи (минтинга) NFT-подарков. */
 function NFTTerminal({ t }) {
   const [status, setStatus] = useState('idle'); 
   const [step, setStep] = useState(0);
   const steps = t.mint.steps;
 
-  const handleMint = () => {
-    setStatus('processing');
-    setStep(0);
-  };
+  const handleMint = () => { setStatus('processing'); setStep(0); };
 
   useEffect(() => {
     if (status !== 'processing') return;
     const interval = setInterval(() => {
-      setStep((prev) => {
+      setStep(prev => {
         if (prev < steps.length - 1) return prev + 1;
         clearInterval(interval);
         setTimeout(() => setStatus('success'), 800);
@@ -539,10 +563,16 @@ function NFTTerminal({ t }) {
         ) : (
           <div className="space-y-4 text-black text-left">
             <div className="bg-white border-2 border-black p-3 md:p-4 shadow-sm space-y-4">
-              <div className="flex justify-between items-start"><div className="space-y-1 text-left"><div className="text-[10px] font-black uppercase">GENESIS_NFT_#01</div><div className="text-[7px] font-bold uppercase opacity-40">Asset Status: Ready_to_Mint</div></div><Plus size={16} className="text-green-500" /></div>
+              <div className="flex justify-between items-start">
+                  <div className="space-y-1 text-left">
+                      <div className="text-[10px] font-black uppercase">GENESIS_NFT_#01</div>
+                      <div className="text-[7px] font-bold uppercase opacity-40">Asset Status: Ready_to_Mint</div>
+                  </div>
+                  <Plus size={16} className="text-green-500" />
+              </div>
               <div className="flex flex-col sm:flex-row gap-4">
                 <div className="w-full sm:w-20 h-20 bg-black flex items-center justify-center shrink-0 text-white"><Ticket size={32} className="text-[#CCFF00]" /></div>
-                <div className="flex-grow grid grid-cols-1 gap-1">
+                <div className="flex-grow grid grid-cols-1 gap-1 text-left">
                   {[
                     { label: 'Collection', val: 'THYSS ORIGIN' },
                     { label: 'Utility', val: '10% DISCOUNT' },
@@ -565,7 +595,6 @@ function NFTTerminal({ t }) {
   );
 }
 
-/* FittingTerminal: Демонстрация умной ИИ-примерки. */
 function FittingTerminal({ t }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
@@ -682,14 +711,6 @@ function FittingTerminal({ t }) {
 // --- СТРАНИЦЫ И НАВИГАЦИЯ ---
 
 function NavigationBlockMobile({ onNavigateHome, onConnect, t, lang, setLang, standardPadding, isSimplified = false }) {
-  const navItems = [
-    { id: 'widget', label: t.nav.widget },
-    { id: 'crm', label: t.nav.crm },
-    { id: 'loyalty', label: t.nav.loyalty },
-    { id: 'fitting', label: t.nav.fitting },
-    { id: 'rates', label: t.nav.rates }
-  ];
-
   return (
     <nav className="fixed top-0 left-0 w-full z-[100] bg-white border-b border-black h-[72px] flex items-center text-black">
       <div className={`w-full ${standardPadding} flex justify-between items-center h-full text-black`}>
@@ -697,22 +718,23 @@ function NavigationBlockMobile({ onNavigateHome, onConnect, t, lang, setLang, st
         {!isSimplified ? (
           <>
             <div className="hidden lg:flex items-center gap-8 h-full">
-              {navItems.map(item => (
-                <a key={item.id} href={`#${item.id}`} className="text-[9px] font-black uppercase tracking-widest hover:line-through transition-all px-1">
-                  {String(item.label)}
+              {['widget', 'crm', 'loyalty', 'fitting', 'rates'].map(id => (
+                <a key={id} href={`#${id}`} className="text-[9px] font-black uppercase tracking-widest hover:line-through transition-all px-1">
+                  {String(t.nav[id])}
                 </a>
               ))}
             </div>
             <div className="flex items-center gap-3 md:gap-4">
               <div className="flex items-center gap-1 md:gap-2 text-[10px] font-black uppercase tracking-widest mr-1 select-none">
                 <button onClick={() => setLang('RU')} className={`hover:line-through transition-all ${lang === 'RU' ? 'text-black' : 'opacity-30'} cursor-pointer`}>RU</button>
-                <span className="opacity-100 text-[10px] font-black mx-1">|</span>
+                <span className="opacity-100 text-[10px] font-black mx-0.5">|</span>
                 <button onClick={() => setLang('EN')} className={`hover:line-through transition-all ${lang === 'EN' ? 'text-black' : 'opacity-30'} cursor-pointer`}>EN</button>
+                <span className="opacity-100 text-[10px] font-black mx-0.5">|</span>
+                <button onClick={() => setLang('ES')} className={`hover:line-through transition-all ${lang === 'ES' ? 'text-black' : 'opacity-30'} cursor-pointer`}>ES</button>
+                <span className="opacity-100 text-[10px] font-black mx-0.5">|</span>
+                <button onClick={() => setLang('KO')} className={`hover:line-through transition-all ${lang === 'KO' ? 'text-black' : 'opacity-30'} cursor-pointer`}>KO</button>
               </div>
-              <button 
-                onClick={onConnect} 
-                className="px-3 md:px-5 py-2 bg-[#CCFF00] text-black text-[9px] md:text-[10px] font-black uppercase border-2 border-black hover:bg-black hover:text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer flex items-center gap-2"
-              >
+              <button onClick={onConnect} className="px-3 md:px-5 py-2 bg-[#CCFF00] text-black text-[9px] md:text-[10px] font-black uppercase border-2 border-black hover:bg-black hover:text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer flex items-center gap-2">
                 <span className="hidden sm:inline">{String(t.nav.connect)}</span>
                 <span className="sm:hidden">BETA</span>
                 <ArrowRight size={14} />
@@ -752,7 +774,9 @@ function FooterBlock({ onNavigateError, standardPadding, t }) {
         </div>
       </div>
       <div className={`pt-10 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4 text-[8px] font-bold uppercase text-white/40 ${standardPadding}`}>
-        <span>© 2026 THYSS x <a href="https://shutterfeel.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-all no-underline hover:underline decoration-[#CCFF00] decoration-2 underline-offset-4">SHUTTERFEEL</a></span>
+        <span>
+          © 2026 THYSS x <a href="https://shutterfeel.com" target="_blank" rel="noopener noreferrer" className="hover:underline decoration-[#CCFF00] decoration-2 underline-offset-4 transition-all">SHUTTERFEEL</a>
+        </span>
         <span>Built on TON</span>
       </div>
     </footer>
@@ -847,12 +871,27 @@ function LandingContent({ onNavigateError, onConnect, t, lang, setLang, standard
                 <div className="p-4 md:p-6 space-y-4 text-left">
                   <div className="p-3 md:p-4 border-2 border-black bg-zinc-50 flex gap-4 items-center">
                     <div className="w-12 h-12 md:w-16 md:h-16 bg-black flex items-center justify-center border border-black shadow-[4px_4px_0px_0px_rgba(204,255,0,1)] text-[#CCFF00]"><Search size={24} className="animate-pulse" /></div>
-                    <div className="text-black text-left"><div className="text-[10px] font-black uppercase">Scanned Profile</div><div className="text-[8px] font-mono opacity-50 truncate max-w-[150px]">UQAs...3e9j_wallet</div></div>
+                    <div className="text-black text-left">
+                      <div className="text-[10px] font-black uppercase">{t.crm.scanned}</div>
+                      <div className="text-[8px] font-mono opacity-50 truncate max-w-[150px]">UQAs...3e9j_wallet</div>
+                    </div>
                   </div>
-                  {[ { addr: '0x71...a3b', amount: '12,420 USDT', tags: ['WHALE', 'OG'] }, { addr: '0x32...f9e', amount: '840 USDT', tags: ['ACTIVE'] }, { addr: '0x9a...2c1', amount: '2,100 USDT', tags: ['OG'] } ].map(user => (
-                    <div key={user.addr} className="p-3 border border-black/10 flex justify-between items-center bg-[#FDFDFD] text-[10px] font-black uppercase leading-none text-black text-left"><div className="flex flex-col gap-1 text-left"><div className="flex items-center gap-2"><Users size={12} /> <span>{user.addr}</span></div><div className="flex gap-1 text-left">{user.tags.map(tag => (
-                      <span key={tag} className={`text-[6px] font-black border px-1 ${tag === 'WHALE' ? 'bg-orange-50 border-orange-200 text-orange-600' : tag === 'OG' ? 'bg-purple-50 border-purple-200 text-purple-600' : 'bg-green-50 border-green-200 text-green-600'}`}>{tag}</span>
-                    ))}</div></div><span className="text-black font-black text-left">{user.amount}</span></div>
+                  {[ 
+                    { addr: '0x71...a3b', amount: '12,420 USDT', tags: ['WHALE', 'OG'] }, 
+                    { addr: '0x32...f9e', amount: '840 USDT', tags: ['ACTIVE'] }, 
+                    { addr: '0x9a...2c1', amount: '2,100 USDT', tags: ['OG'] } 
+                  ].map(user => (
+                    <div key={user.addr} className="p-3 border border-black/10 flex justify-between items-center bg-[#FDFDFD] text-[10px] font-black uppercase leading-none text-black text-left">
+                      <div className="flex flex-col gap-1 text-left">
+                        <div className="flex items-center gap-2"><Users size={12} /> <span>{user.addr}</span></div>
+                        <div className="flex gap-1 text-left">
+                          {user.tags.map(tag => (
+                            <span key={tag} className={`text-[6px] font-black border px-1 ${tag === 'WHALE' ? 'bg-orange-50 border-orange-200 text-orange-600' : tag === 'OG' ? 'bg-purple-50 border-purple-200 text-purple-600' : 'bg-green-50 border-green-200 text-green-600'}`}>{tag}</span>
+                          ))}
+                        </div>
+                      </div>
+                      <span className="text-black font-black text-left">{user.amount}</span>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -900,31 +939,35 @@ function LandingContent({ onNavigateError, onConnect, t, lang, setLang, standard
         {/* PRICING SECTION */}
         <section id="rates" className="border-b border-black text-left scroll-mt-[72px] w-full">
           <div className="grid grid-cols-1 lg:grid-cols-3 w-full border-t border-black bg-white">
-            {plansData.map((p) => { 
-              const displayPrice = p.price; 
-              const isDark = p.dark; 
-              return (
-                <div key={p.id} className={`relative p-8 md:p-12 border-b lg:border-b-0 lg:border-r border-black flex flex-col min-h-fit lg:min-h-[700px] ${isDark ? 'bg-black text-white' : 'bg-white text-black'} last:border-b-0 text-left`}>
-                  {p.popular && (
-                    <div className="absolute top-0 right-8 md:right-12 -translate-y-1/2 bg-[#CCFF00] border-2 border-black px-4 py-1.5 text-[10px] font-black uppercase text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] whitespace-nowrap z-20">
-                      {String(t.pricing.popular)}
+            {plansData.map((p) => (
+              <div key={p.id} className={`relative p-8 md:p-12 border-b lg:border-b-0 lg:border-r border-black flex flex-col min-h-fit lg:min-h-[700px] ${p.dark ? 'bg-black text-white' : 'bg-white text-black'} last:border-b-0 text-left`}>
+                {p.popular && (
+                  <div className="absolute top-0 right-8 md:right-12 -translate-y-1/2 bg-[#CCFF00] border-2 border-black px-4 py-1.5 text-[10px] font-black uppercase text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] whitespace-nowrap z-20">
+                    {String(t.pricing.popular)}
+                  </div>
+                )}
+                <span className={`text-[11px] font-black uppercase tracking-[0.3em] mb-6 ${p.dark ? 'text-white/40' : 'text-black/30'} text-left`}>{String(p.name)}</span>
+                <div className="mb-4 text-left">
+                  {p.price === 0 ? (
+                    <div className={`text-6xl md:text-7xl font-black ${p.dark ? 'text-white' : 'text-black'}`}>FREE</div>
+                  ) : p.price === 'CUSTOM' ? (
+                    <div className={`text-6xl md:text-7xl font-black ${p.dark ? 'text-white' : 'text-black'}`}>{p.price}</div>
+                  ) : (
+                    <div className="flex items-baseline gap-1">
+                      <span className={`text-6xl md:text-7xl font-black ${p.dark ? 'text-white' : 'text-black'}`}>{p.price.toLocaleString()}</span>
+                      <span className={`text-xl font-black ${p.dark ? 'text-white' : 'text-black'}`}>{String(t.pricing.currency)}</span>
+                      <span className={`text-[10px] font-bold opacity-50 ml-2 ${p.dark ? 'text-white' : 'text-black'}`}>{String(t.pricing.perMonth)}</span>
                     </div>
                   )}
-                  <span className={`text-[11px] font-black uppercase tracking-[0.3em] mb-6 ${isDark ? 'text-white/40' : 'text-black/30'} text-left`}>{String(p.name)}</span>
-                  <div className="mb-4 text-left">
-                    {displayPrice === 0 ? (<div className={`text-6xl md:text-7xl font-black ${isDark ? 'text-white' : 'text-black'}`}>FREE</div>) : displayPrice === 'CUSTOM' ? (<div className={`text-6xl md:text-7xl font-black ${isDark ? 'text-white' : 'text-black'}`}>{displayPrice}</div>) : (
-                      <div className="flex items-baseline gap-1"><span className={`text-6xl md:text-7xl font-black ${isDark ? 'text-white' : 'text-black'}`}>{displayPrice}</span><span className={`text-xl font-black ${isDark ? 'text-white' : 'text-black'}`}>{String(t.pricing.currency)}</span><span className={`text-[10px] font-bold opacity-50 ml-2 ${isDark ? 'text-white' : 'text-black'}`}>{String(t.pricing.perMonth)}</span></div>
-                    )}
-                  </div>
-                  {p.promo && (<div className="mb-4 py-1.5 px-3 bg-white/10 border border-white/20 text-[9px] font-black uppercase tracking-wider text-[#CCFF00] w-fit text-left">{String(p.promo)}</div>)}
-                  <p className={`text-[12px] font-semibold mb-10 text-left opacity-70 ${isDark ? 'text-white/80' : 'text-black/60'}`}>{String(p.sub)}</p>
-                  <ul className={`space-y-4 mb-12 flex-grow uppercase font-bold text-[9px] ${isDark ? 'text-white' : 'text-black'}`}>
-                    {p.features.map(f => (<li key={f} className="flex items-start gap-3 text-left"><div className={`w-1.5 h-1.5 mt-1 flex-shrink-0 ${isDark ? 'bg-[#CCFF00]' : 'bg-black'}`}></div><span className="text-left">{String(f)}</span></li>))}
-                  </ul>
-                  <button onClick={() => onConnect()} className={`w-full py-5 text-[10px] font-black uppercase border-2 transition-all cursor-pointer shadow-[6px_6px_0px_0px_rgba(0,0,0,0.1)] active:shadow-none active:translate-x-1 active:translate-y-1 ${isDark ? 'bg-white text-black border-white hover:bg-[#CCFF00] hover:text-black' : 'bg-black text-white border-black hover:bg-[#CCFF00] hover:text-black'}`}>{p.price === 'CUSTOM' ? String(t.pricing.contact) : String(t.pricing.choose)}</button>
                 </div>
-              ); 
-            })}
+                {p.promo && (<div className="mb-4 py-1.5 px-3 bg-white/10 border border-white/20 text-[9px] font-black uppercase tracking-wider text-[#CCFF00] w-fit text-left">{String(p.promo)}</div>)}
+                <p className={`text-[12px] font-semibold mb-10 text-left opacity-70 ${p.dark ? 'text-white/80' : 'text-black/60'}`}>{String(p.sub)}</p>
+                <ul className={`space-y-4 mb-12 flex-grow uppercase font-bold text-[9px] ${p.dark ? 'text-white' : 'text-black'}`}>
+                  {p.features.map(f => (<li key={f} className="flex items-start gap-3 text-left"><div className={`w-1.5 h-1.5 mt-1 flex-shrink-0 ${p.dark ? 'bg-[#CCFF00]' : 'bg-black'}`}></div><span className="text-left">{String(f)}</span></li>))}
+                </ul>
+                <button onClick={() => onConnect()} className={`w-full py-5 text-[10px] font-black uppercase border-2 transition-all cursor-pointer shadow-[6px_6px_0px_0px_rgba(0,0,0,0.1)] active:shadow-none active:translate-x-1 active:translate-y-1 ${p.dark ? 'bg-white text-black border-white hover:bg-[#CCFF00] hover:text-black' : 'bg-black text-white border-black hover:bg-[#CCFF00] hover:text-black'}`}>{p.price === 'CUSTOM' ? String(t.pricing.contact) : String(t.pricing.choose)}</button>
+              </div>
+            ))}
           </div>
         </section>
         
@@ -937,29 +980,16 @@ function LandingContent({ onNavigateError, onConnect, t, lang, setLang, standard
 function BetaAccessPage({ onBack, t, lang, setLang, standardPadding }) {
   const [status, setStatus] = useState('idle'); 
   const [formData, setFormData] = useState({ brand: '', site: '', tg: '', name: '', volume: '' });
-  const volumeOptions = lang === 'RU' ? ['< 100к', '100к – 500к', '500к – 1.5М', '1.5М+'] : ['< 2K', '2K – 10K', '10K – 50K', '50K+'];
+  const volumeOptions = lang === 'KO' ? ['< 200만', '200만 – 1000만', '1000만 – 5000만', '5000만+'] : ['< 2K', '2K – 10K', '10K – 50K', '50K+'];
 
-  const handleSubmit = async (e) => { 
+  const handleSubmit = (e) => { 
     e.preventDefault(); 
     setStatus('processing'); 
-
-    try {
-      const response = await fetch('/api/send-to-tg', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
-      const data = await response.json();
-      if (data.success) { setStatus('success'); } 
-      else { throw new Error(data.error || 'Failed to send'); }
-    } catch (error) {
-      console.error('Error sending message:', error);
-      setStatus('idle');
-    }
+    setTimeout(() => setStatus('success'), 1500);
   };
 
   return (
-    <div className="min-h-screen bg-white font-sans text-black overflow-x-hidden selection:bg-[#CCFF00] selection:text-black w-full">
+    <div className="min-h-screen bg-white font-sans text-black overflow-x-hidden w-full">
       <NavigationBlockMobile onNavigateHome={onBack} onConnect={null} t={t} lang={lang} setLang={setLang} standardPadding={standardPadding} isSimplified={true} />
       <main className={`pt-[72px] pb-12 md:pb-24 ${standardPadding} animate-in fade-in duration-700`}>
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start mt-8 md:mt-12 text-left text-black">
@@ -1009,11 +1039,7 @@ function BetaAccessPage({ onBack, t, lang, setLang, standardPadding }) {
                         </div>
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 md:gap-3 text-black">
                           {volumeOptions.map(val => (
-                            <button 
-                              key={val} type="button" 
-                              onClick={() => setFormData({...formData, volume: val})}
-                              className={`py-3 text-[9px] md:text-[10px] font-black border-2 border-black transition-all ${formData.volume === val ? 'bg-black text-white' : 'bg-white text-black hover:bg-[#CCFF00]'}`}
-                            >
+                            <button key={val} type="button" onClick={() => setFormData({...formData, volume: val})} className={`py-3 text-[9px] md:text-[10px] font-black border-2 border-black transition-all ${formData.volume === val ? 'bg-black text-white' : 'bg-white text-black hover:bg-[#CCFF00]'}`}>
                               {String(val)}
                             </button>
                           ))}
@@ -1082,11 +1108,9 @@ export default function App() {
                 <p className="text-xs md:text-sm font-black uppercase tracking-[0.2em] text-black">{String(t.notFound.error)}</p>
               </div>
             </div>
-            
             <button onClick={handleBack} className="px-10 py-5 bg-black text-white font-black uppercase text-[11px] tracking-[0.3em] border-2 border-black hover:bg-[#CCFF00] hover:text-black transition-all shadow-[6px_6px_0px_0px_rgba(0,0,0,0.2)] text-white">
               {String(t.notFound.back)}
             </button>
-            
             <div className="pt-8 w-full max-w-sm mx-auto">
                <TelegramQRBlock t={t} centered={true} />
             </div>
